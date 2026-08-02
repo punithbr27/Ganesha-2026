@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { api } from '../api';
 import Modal from '../components/Modal';
 import { MdAdd, MdEdit, MdDelete } from 'react-icons/md';
+import { useAuth } from '../context/AuthContext';
 
 const Expenses = () => {
+  const { user } = useAuth();
   const [expenses, setExpenses] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ title: '', expense_date: new Date().toISOString().split('T')[0], amount: '', description: '' });
@@ -65,17 +67,19 @@ const Expenses = () => {
     <div className="animate-fade-in">
       <div className="flex justify-between items-center mb-4">
         <h1>Expenses</h1>
-        <button 
-          className="btn btn-primary" 
-          onClick={() => {
-            setFormData({ title: '', expense_date: new Date().toISOString().split('T')[0], amount: '', description: '' });
-            setEditingId(null);
-            setIsModalOpen(true);
-          }}
-          style={{ display: window.innerWidth > 768 ? 'inline-flex' : 'none' }}
-        >
-          <MdAdd /> Add Expense
-        </button>
+        {user && (
+          <button 
+            className="btn btn-primary" 
+            onClick={() => {
+              setFormData({ title: '', expense_date: new Date().toISOString().split('T')[0], amount: '', description: '' });
+              setEditingId(null);
+              setIsModalOpen(true);
+            }}
+            style={{ display: window.innerWidth > 768 ? 'inline-flex' : 'none' }}
+          >
+            <MdAdd /> Add Expense
+          </button>
+        )}
       </div>
 
       <div className="card table-responsive">
@@ -86,7 +90,7 @@ const Expenses = () => {
               <th>Title</th>
               <th>Amount</th>
               <th>Description</th>
-              <th>Actions</th>
+              {user && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -96,32 +100,36 @@ const Expenses = () => {
                 <td style={{ fontWeight: '500' }}>{e.title}</td>
                 <td style={{ color: 'var(--danger-color)', fontWeight: '600' }}>-₹ {e.amount}</td>
                 <td>{e.description || '-'}</td>
-                <td>
-                  <button onClick={() => handleEdit(e)} style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '12px' }}><MdEdit size={18} /></button>
-                  <button onClick={() => handleDelete(e.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger-color)' }}><MdDelete size={18} /></button>
-                </td>
+                {user && (
+                  <td>
+                    <button onClick={() => handleEdit(e)} style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '12px' }}><MdEdit size={18} /></button>
+                    <button onClick={() => handleDelete(e.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger-color)' }}><MdDelete size={18} /></button>
+                  </td>
+                )}
               </tr>
             ))}
             {expenses.length === 0 && (
               <tr>
-                <td colSpan="5" style={{ textAlign: 'center', padding: '24px' }}>No expenses found</td>
+                <td colSpan={user ? "5" : "4"} style={{ textAlign: 'center', padding: '24px' }}>No expenses found</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <button 
-        className="fab" 
-        onClick={() => {
-          setFormData({ title: '', expense_date: new Date().toISOString().split('T')[0], amount: '', description: '' });
-          setEditingId(null);
-          setIsModalOpen(true);
-        }}
-        style={{ display: window.innerWidth <= 768 ? 'flex' : 'none' }}
-      >
-        <MdAdd />
-      </button>
+      {user && (
+        <button 
+          className="fab" 
+          onClick={() => {
+            setFormData({ title: '', expense_date: new Date().toISOString().split('T')[0], amount: '', description: '' });
+            setEditingId(null);
+            setIsModalOpen(true);
+          }}
+          style={{ display: window.innerWidth <= 768 ? 'flex' : 'none' }}
+        >
+          <MdAdd />
+        </button>
+      )}
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? 'Edit Expense' : 'Add Expense'}>
         <form onSubmit={handleSave}>

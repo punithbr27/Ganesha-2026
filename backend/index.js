@@ -76,7 +76,7 @@ app.post('/api/auth/setup', async (req, res) => {
 });
 
 // --- MEMBERS ROUTES ---
-app.get('/api/members', authenticateToken, async (req, res) => {
+app.get('/api/members', async (req, res) => {
   try {
     const members = await prisma.member.findMany({
       include: {
@@ -138,7 +138,7 @@ app.delete('/api/members/:id', authenticateToken, async (req, res) => {
 });
 
 // --- COLLECTIONS ROUTES ---
-app.get('/api/collections', authenticateToken, async (req, res) => {
+app.get('/api/collections', async (req, res) => {
   try {
     const collections = await prisma.dailyCollection.findMany({
       include: { member: true },
@@ -200,7 +200,7 @@ app.delete('/api/collections/:id', authenticateToken, async (req, res) => {
 });
 
 // --- EXPENSES ROUTES ---
-app.get('/api/expenses', authenticateToken, async (req, res) => {
+app.get('/api/expenses', async (req, res) => {
   try {
     const expenses = await prisma.expense.findMany({
       orderBy: { expense_date: 'desc' }
@@ -261,7 +261,7 @@ app.delete('/api/expenses/:id', authenticateToken, async (req, res) => {
 });
 
 // --- REPORTS / DASHBOARD ROUTES ---
-app.get('/api/reports/dashboard', authenticateToken, async (req, res) => {
+app.get('/api/reports/dashboard', async (req, res) => {
   try {
     const collections = await prisma.dailyCollection.findMany();
     const expenses = await prisma.expense.findMany();
@@ -298,7 +298,7 @@ app.get('/api/reports/dashboard', authenticateToken, async (req, res) => {
 });
 
 // Top Contributors
-app.get('/api/reports/top-contributors', authenticateToken, async (req, res) => {
+app.get('/api/reports/top-contributors', async (req, res) => {
   try {
     const members = await prisma.member.findMany({
       include: { collections: true }

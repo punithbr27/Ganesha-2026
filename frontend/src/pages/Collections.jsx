@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { api } from '../api';
 import Modal from '../components/Modal';
 import { MdAdd, MdEdit, MdDelete } from 'react-icons/md';
+import { useAuth } from '../context/AuthContext';
 
 const Collections = () => {
+  const { user } = useAuth();
   const [collections, setCollections] = useState([]);
   const [members, setMembers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,17 +72,19 @@ const Collections = () => {
     <div className="animate-fade-in">
       <div className="flex justify-between items-center mb-4">
         <h1>Daily Collections</h1>
-        <button 
-          className="btn btn-primary" 
-          onClick={() => {
-            setFormData({ member_id: '', collection_date: new Date().toISOString().split('T')[0], amount: '', remarks: '' });
-            setEditingId(null);
-            setIsModalOpen(true);
-          }}
-          style={{ display: window.innerWidth > 768 ? 'inline-flex' : 'none' }}
-        >
-          <MdAdd /> Add Collection
-        </button>
+        {user && (
+          <button 
+            className="btn btn-primary" 
+            onClick={() => {
+              setFormData({ member_id: '', collection_date: new Date().toISOString().split('T')[0], amount: '', remarks: '' });
+              setEditingId(null);
+              setIsModalOpen(true);
+            }}
+            style={{ display: window.innerWidth > 768 ? 'inline-flex' : 'none' }}
+          >
+            <MdAdd /> Add Collection
+          </button>
+        )}
       </div>
 
       <div className="card table-responsive">
@@ -91,7 +95,7 @@ const Collections = () => {
               <th>Member</th>
               <th>Amount</th>
               <th>Remarks</th>
-              <th>Actions</th>
+              {user && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -101,32 +105,36 @@ const Collections = () => {
                 <td>{c.member?.member_name} ({c.member_id})</td>
                 <td style={{ fontWeight: '600' }}>₹ {c.amount}</td>
                 <td>{c.remarks || '-'}</td>
-                <td>
-                  <button onClick={() => handleEdit(c)} style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '12px' }}><MdEdit size={18} /></button>
-                  <button onClick={() => handleDelete(c.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger-color)' }}><MdDelete size={18} /></button>
-                </td>
+                {user && (
+                  <td>
+                    <button onClick={() => handleEdit(c)} style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '12px' }}><MdEdit size={18} /></button>
+                    <button onClick={() => handleDelete(c.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger-color)' }}><MdDelete size={18} /></button>
+                  </td>
+                )}
               </tr>
             ))}
             {collections.length === 0 && (
               <tr>
-                <td colSpan="5" style={{ textAlign: 'center', padding: '24px' }}>No collections found</td>
+                <td colSpan={user ? "5" : "4"} style={{ textAlign: 'center', padding: '24px' }}>No collections found</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <button 
-        className="fab" 
-        onClick={() => {
-          setFormData({ member_id: '', collection_date: new Date().toISOString().split('T')[0], amount: '', remarks: '' });
-          setEditingId(null);
-          setIsModalOpen(true);
-        }}
-        style={{ display: window.innerWidth <= 768 ? 'flex' : 'none' }}
-      >
-        <MdAdd />
-      </button>
+      {user && (
+        <button 
+          className="fab" 
+          onClick={() => {
+            setFormData({ member_id: '', collection_date: new Date().toISOString().split('T')[0], amount: '', remarks: '' });
+            setEditingId(null);
+            setIsModalOpen(true);
+          }}
+          style={{ display: window.innerWidth <= 768 ? 'flex' : 'none' }}
+        >
+          <MdAdd />
+        </button>
+      )}
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? 'Edit Collection' : 'Add Collection'}>
         <form onSubmit={handleSave}>

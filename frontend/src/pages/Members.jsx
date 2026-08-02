@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { api } from '../api';
 import Modal from '../components/Modal';
 import { MdAdd, MdEdit, MdDelete, MdSearch } from 'react-icons/md';
+import { useAuth } from '../context/AuthContext';
 
 const Members = () => {
+  const { user } = useAuth();
   const [members, setMembers] = useState([]);
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,17 +68,19 @@ const Members = () => {
     <div className="animate-fade-in">
       <div className="flex justify-between items-center mb-4">
         <h1>Members</h1>
-        <button 
-          className="btn btn-primary d-none-mobile" 
-          onClick={() => {
-            setFormData({ member_name: '', phone_number: '' });
-            setEditingId(null);
-            setIsModalOpen(true);
-          }}
-          style={{ display: window.innerWidth > 768 ? 'inline-flex' : 'none' }}
-        >
-          <MdAdd /> Add Member
-        </button>
+        {user && (
+          <button 
+            className="btn btn-primary d-none-mobile" 
+            onClick={() => {
+              setFormData({ member_name: '', phone_number: '' });
+              setEditingId(null);
+              setIsModalOpen(true);
+            }}
+            style={{ display: window.innerWidth > 768 ? 'inline-flex' : 'none' }}
+          >
+            <MdAdd /> Add Member
+          </button>
+        )}
       </div>
 
       <div className="card" style={{ marginBottom: '24px' }}>
@@ -109,14 +113,16 @@ const Members = () => {
                 </span>
                 {m.member_name}
               </h3>
-              <div className="flex gap-2">
-                <button onClick={() => handleEdit(m)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
-                  <MdEdit size={20} />
-                </button>
-                <button onClick={() => handleDelete(m.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger-color)' }}>
-                  <MdDelete size={20} />
-                </button>
-              </div>
+              {user && (
+                <div className="flex gap-2">
+                  <button onClick={() => handleEdit(m)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                    <MdEdit size={20} />
+                  </button>
+                  <button onClick={() => handleDelete(m.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger-color)' }}>
+                    <MdDelete size={20} />
+                  </button>
+                </div>
+              )}
             </div>
             <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
               <p>Phone: {m.phone_number || 'N/A'}</p>
@@ -127,17 +133,19 @@ const Members = () => {
         ))}
       </div>
 
-      <button 
-        className="fab" 
-        onClick={() => {
-          setFormData({ member_name: '', phone_number: '' });
-          setEditingId(null);
-          setIsModalOpen(true);
-        }}
-        style={{ display: window.innerWidth <= 768 ? 'flex' : 'none' }}
-      >
-        <MdAdd />
-      </button>
+      {user && (
+        <button 
+          className="fab" 
+          onClick={() => {
+            setFormData({ member_name: '', phone_number: '' });
+            setEditingId(null);
+            setIsModalOpen(true);
+          }}
+          style={{ display: window.innerWidth <= 768 ? 'flex' : 'none' }}
+        >
+          <MdAdd />
+        </button>
+      )}
 
       <Modal 
         isOpen={isModalOpen} 

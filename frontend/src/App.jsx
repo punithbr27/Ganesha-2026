@@ -8,9 +8,8 @@ import Expenses from './pages/Expenses';
 import Login from './pages/Login';
 import Setup from './pages/Setup';
 
-const PrivateRoute = ({ children }) => {
-  const { user } = useAuth();
-  return user ? <Layout>{children}</Layout> : <Navigate to="/login" />;
+const AppLayout = ({ children }) => {
+  return <Layout>{children}</Layout>;
 };
 
 function App() {
@@ -19,10 +18,10 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/setup" element={<Setup />} />
-        <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-        <Route path="/members" element={<PrivateRoute><Members /></PrivateRoute>} />
-        <Route path="/collections" element={<PrivateRoute><Collections /></PrivateRoute>} />
-        <Route path="/expenses" element={<PrivateRoute><Expenses /></PrivateRoute>} />
+        <Route path="/" element={<AppLayout><Dashboard /></AppLayout>} />
+        <Route path="/members" element={<AppLayout><Members /></AppLayout>} />
+        <Route path="/collections" element={<AppLayout><Collections /></AppLayout>} />
+        <Route path="/expenses" element={<AppLayout><Expenses /></AppLayout>} />
       </Routes>
     </Router>
   );

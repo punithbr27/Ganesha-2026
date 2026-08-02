@@ -10,7 +10,7 @@ import {
 import './Layout.css';
 
 const Layout = ({ children }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const location = useLocation();
 
   const navItems = [
@@ -41,10 +41,17 @@ const Layout = ({ children }) => {
           ))}
         </nav>
         <div className="sidebar-footer">
-          <button className="nav-link logout-btn" onClick={logout}>
-            <MdLogout />
-            <span>Logout</span>
-          </button>
+          {user ? (
+            <button className="nav-link logout-btn" onClick={logout}>
+              <MdLogout />
+              <span>Logout</span>
+            </button>
+          ) : (
+            <Link to="/login" className="nav-link" style={{ color: 'var(--secondary-color)' }}>
+              <MdLogout style={{ transform: 'rotate(180deg)' }} />
+              <span>Login</span>
+            </Link>
+          )}
         </div>
       </aside>
 
