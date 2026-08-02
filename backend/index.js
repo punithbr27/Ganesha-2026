@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey_ganesha2026';
