@@ -72,6 +72,17 @@ const Layout = ({ children }) => {
             <span>{item.name}</span>
           </Link>
         ))}
+        {user ? (
+          <button className="bottom-nav-link" onClick={logout} style={{ border: 'none', background: 'none', cursor: 'pointer' }}>
+            <MdLogout />
+            <span>Logout</span>
+          </button>
+        ) : (
+          <Link to="/login" className="bottom-nav-link" style={{ color: 'var(--secondary-color)' }}>
+            <MdLogout style={{ transform: 'rotate(180deg)' }} />
+            <span>Login</span>
+          </Link>
+        )}
       </nav>
     </div>
   );
