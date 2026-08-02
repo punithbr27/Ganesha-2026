@@ -55,6 +55,7 @@ app.post('/api/auth/login', async (req, res) => {
     const token = jwt.sign({ username: admin.username }, JWT_SECRET, { expiresIn: '1d' });
     res.json({ token, username: admin.username });
   } catch (error) {
+    console.error('Setup Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
